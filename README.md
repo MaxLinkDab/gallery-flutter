@@ -1,16 +1,11 @@
-# gallery
+# Gallery app
 
-A new Flutter project.
+Application Network gallery - pinterest at minimum quality =) Write on flutter framework
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Take app in build/app/outputs/flutter-apk/app-release.apk
 
-A few resources to get you started if this is your first Flutter project:
+## What does this app do?
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Shows you pictures that are taken by the API, I was asked to do so =]
