@@ -1,13 +1,26 @@
 import 'dart:convert';
 
-enum Trend { news, popular }
+import 'package:hive/hive.dart';
+part 'post.g.dart';
 
+@HiveType(typeId: 1)
 class Post {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final String dateCreate;
+
+  @HiveField(3)
   final String description;
+
+  @HiveField(4)
   final Image? image;
+
+  @HiveField(5)
   final String user;
 
   Post(
@@ -68,8 +81,12 @@ class Post {
   }
 }
 
+@HiveType(typeId: 2)
 class Image {
+  @HiveField(0)
   int id;
+
+  @HiveField(1)
   String name;
   Image({
     required this.id,

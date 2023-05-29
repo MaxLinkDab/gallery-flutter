@@ -19,10 +19,17 @@ class _HomeState extends State<Home> {
     return BlocListener<ConnectivityBloc, ConnectivityState>(
       listener: (context, state) {
         if (state is ConnectivitySucces) {
-          context.read<NewBloc>().add(const GetNewPost());
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          context.read<PopularBloc>().add(CleanPopularCacheData());
+          context.read<NewBloc>().add(CleanNewCacheData());
+
           context.read<PopularBloc>().add(const GetPopularPost());
+          context.read<NewBloc>().add(const GetNewPost());
         } else if (state is ConnectivityError) {
+          context.read<PopularBloc>().add(GetPopularCacheData());
+          context.read<NewBloc>().add(GetNewCacheData());
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              duration: const Duration(days: 365),
               backgroundColor: Colors.pink[100],
               content: Center(
                 child: Text(

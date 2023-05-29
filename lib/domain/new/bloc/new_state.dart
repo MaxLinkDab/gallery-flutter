@@ -4,10 +4,12 @@ abstract class NewState extends Equatable {
   final int? page;
   final List<Post>? posts;
   final User? user;
+  final String? error;
   const NewState({
     this.page,
     this.posts,
     this.user,
+    this.error,
   });
 }
 
@@ -35,6 +37,16 @@ class NewLoaded extends NewState {
       posts: posts ?? this.posts,
     );
   }
+}
+
+class NewCache extends NewState {
+  final List<Post>? posts;
+  const NewCache({
+    required this.posts,
+  });
+
+  @override
+  List<Object?> get props => [posts];
 }
 
 class NewError extends NewState {

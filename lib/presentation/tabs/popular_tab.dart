@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'dart:math' as math;
-import '../../domain/entity/post.dart';
 import '../../domain/popular/bloc/popular_bloc.dart';
 import '../widgets/error_list.dart';
 import '../widgets/image_tile.dart';
@@ -24,8 +22,6 @@ class _PopularTabState extends State<PopularTab>
     with SingleTickerProviderStateMixin {
   final _listController = ScrollController();
   late AnimationController _draggableController;
-  final PagingController<int, Post> _pagingController =
-      PagingController(firstPageKey: 0);
   late StreamController<bool> loadingController = StreamController.broadcast();
   @override
   void initState() {
@@ -44,7 +40,6 @@ class _PopularTabState extends State<PopularTab>
   @override
   void dispose() {
     _draggableController.dispose();
-    _pagingController.dispose();
 
     super.dispose();
   }
@@ -80,10 +75,12 @@ class _PopularTabState extends State<PopularTab>
             }
             if (state is PopularError) {
               return ErrorList(
+                error: state.error,
                 controller: _listController,
               );
             }
-            if (state is PopularLoaded && state.posts != null) {
+            if (state is PopularLoaded && state.posts != null ||
+                state is PopularCache && state.posts != null) {
               return Stack(children: [
                 Container(
                   decoration: const BoxDecoration(color: Colors.white),
@@ -96,7 +93,7 @@ class _PopularTabState extends State<PopularTab>
                     crossAxisSpacing: 9,
                     mainAxisSpacing: 9,
                     padding: const EdgeInsets.all(8),
-                    controller: _listController,
+                    controller: state is PopularLoaded ? _listController : null,
                     itemCount: state.posts!.length + 2,
                     itemBuilder: (context, index) {
                       if (index < state.posts!.length) {
@@ -148,7 +145,8 @@ class _PopularTabState extends State<PopularTab>
                     }),
               ]);
             }
-            return Loading(
+            return ErrorList(
+              error: '',
               controller: _listController,
             );
           },

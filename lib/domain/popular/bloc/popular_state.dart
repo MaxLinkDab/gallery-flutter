@@ -4,11 +4,13 @@ abstract class PopularState extends Equatable {
   final int? page;
   final List<Post>? posts;
   final User? user;
+  final String? error;
 
   const PopularState({
     this.page,
     this.posts,
     this.user,
+    this.error,
   });
 }
 
@@ -38,6 +40,16 @@ class PopularLoaded extends PopularState {
       user: user ?? this.user,
     );
   }
+}
+
+class PopularCache extends PopularState {
+  final List<Post>? posts;
+  const PopularCache({
+    required this.posts,
+  });
+
+  @override
+  List<Object?> get props => [posts];
 }
 
 class PopularError extends PopularState {

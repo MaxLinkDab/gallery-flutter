@@ -27,3 +27,7 @@ class GetUserData extends NewEvent {
     required this.id,
   });
 }
+
+class GetNewCacheData extends NewEvent {}
+
+class CleanNewCacheData extends NewEvent {}

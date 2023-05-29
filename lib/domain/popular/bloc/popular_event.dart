@@ -27,3 +27,7 @@ class GetUserData extends PopularEvent {
     required this.id,
   });
 }
+
+class GetPopularCacheData extends PopularEvent {}
+
+class CleanPopularCacheData extends PopularEvent {}

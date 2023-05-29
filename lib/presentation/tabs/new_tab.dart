@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'dart:math' as math;
-import '../../domain/entity/post.dart';
 import '../../domain/new/bloc/new_bloc.dart';
 import '../widgets/error_list.dart';
 import '../widgets/image_tile.dart';
@@ -23,8 +21,7 @@ class NewTab extends StatefulWidget {
 class _NewTabState extends State<NewTab> with SingleTickerProviderStateMixin {
   final _listController = ScrollController();
   late AnimationController _draggableController;
-  final PagingController<int, Post> _pagingController =
-      PagingController(firstPageKey: 0);
+
   late StreamController<bool> loadingController = StreamController.broadcast();
   @override
   void initState() {
@@ -43,7 +40,6 @@ class _NewTabState extends State<NewTab> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _draggableController.dispose();
-    _pagingController.dispose();
     super.dispose();
   }
 /*   callDescription(posts.Post post, User? user) async {
@@ -76,12 +72,21 @@ class _NewTabState extends State<NewTab> with SingleTickerProviderStateMixin {
                 colorIcon: Colors.pink,
               ));
             }
+
+            if (state is NewLoading) {
+              return const Center(
+                  child: LoadingAnimation(
+                colorIcon: Colors.pink,
+              ));
+            }
             if (state is NewError) {
               return ErrorList(
+                error: state.error,
                 controller: _listController,
               );
             }
-            if (state is NewLoaded && state.posts != null) {
+            if (state is NewLoaded && state.posts != null ||
+                state is NewCache && state.posts != null) {
               return Stack(children: [
                 Container(
                   decoration: const BoxDecoration(color: Colors.white),
@@ -94,15 +99,16 @@ class _NewTabState extends State<NewTab> with SingleTickerProviderStateMixin {
                     crossAxisSpacing: 9,
                     mainAxisSpacing: 9,
                     padding: const EdgeInsets.all(8),
-                    controller: _listController,
+                    controller: state is NewLoaded ? _listController : null,
                     itemCount: state.posts!.length + 2,
                     itemBuilder: (context, index) {
                       if (index < state.posts!.length) {
                         return GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             context
                                 .read<NewBloc>()
                                 .add(GetUserData(id: state.posts![index].user));
+
                             showModalBottomSheet(
                                 useSafeArea: true,
                                 transitionAnimationController:
@@ -145,7 +151,8 @@ class _NewTabState extends State<NewTab> with SingleTickerProviderStateMixin {
                     }),
               ]);
             }
-            return Loading(
+            return ErrorList(
+              error: '',
               controller: _listController,
             );
           },

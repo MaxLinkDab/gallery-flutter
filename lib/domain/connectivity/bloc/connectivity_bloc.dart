@@ -18,7 +18,20 @@ class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
         emit(ConnectivityError());
       },
     );
-    _connectivityStream = Connectivity()
+    on<CheckConnection>((event, emit) async {
+      ConnectivityResult result = await Connectivity().checkConnectivity();
+      if (result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi) {
+        add(Connected());
+      } else {
+        add(NotConnected());
+      }
+    });
+
+    _connectivityStream = _checkConnection();
+  }
+  _checkConnection() {
+    return Connectivity()
         .onConnectivityChanged
         .asBroadcastStream()
         .listen((ConnectivityResult result) {
@@ -30,6 +43,7 @@ class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
       }
     });
   }
+
   @override
   Future<void> close() async {
     _connectivityStream?.cancel();
